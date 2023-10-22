@@ -13,8 +13,7 @@ public:
     }
 
     void loop() {
-        // Your MIDI logic goes here, for example:
-        hardware.sendMIDI(60, 127);  // Sending a MIDI note
+        hardware.sendMIDI(60, 127);
     }
 };
 
