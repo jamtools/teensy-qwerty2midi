@@ -47,5 +47,10 @@ jobs:
       - name: Install Dependencies
         run: pio lib install
 
-      - name: Run tests
+      - name: Build Project
         run: pio run -e teensy41
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: firmware.hex
+          path: .pio/build/teensy41/firmware.hex
