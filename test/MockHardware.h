@@ -1,6 +1,7 @@
 #ifndef MOCK_HARDWARE_H
 #define MOCK_HARDWARE_H
 
+#include <cstring>
 #include <vector>
 #include <utility>
 #include <string>
