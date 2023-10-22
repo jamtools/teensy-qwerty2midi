@@ -51,7 +51,6 @@ void test_versionCommand() {
     MockHardware mockHardware;
     MyLogic logic(mockHardware);
 
-
     logic.setup();
 
     const uint8_t commandId = 0x01;
@@ -62,7 +61,7 @@ void test_versionCommand() {
 
     TEST_ASSERT_EQUAL_MESSAGE(1, mockHardware.sendSysExCalls.size(), "sendSysEx calls");
     std::string capturedVersion = getContentFromSysExMessage(&mockHardware, 0);
-    TEST_ASSERT_EQUAL_STRING("1.0.1", capturedVersion.c_str());
+    TEST_ASSERT_EQUAL_STRING("test", capturedVersion.c_str());
 }
 
 void test_greetingCommand() {

@@ -49,6 +49,8 @@ jobs:
 
       - name: Build Project
         run: pio run -e teensy41
+        env:
+          APPLICATION_VERSION: ${{ github.head_ref }}.${{ github.sha }}
 
       - uses: actions/upload-artifact@v3
         with:

@@ -3,6 +3,18 @@
 
 #include "IHardware.h"
 
+#include <cstdlib>
+
+std::string getVersion() {
+  #ifdef APPLICATION_VERSION
+    std::string version = APPLICATION_VERSION;
+  #else
+    std::string version = "development";
+  #endif
+
+  return version;
+}
+
 std::vector<byte> createSysExMessage(const std::string& version) {
     std::vector<byte> byteArray = {0xF0, 0x7D, 0x02};
     for (char c : version) {
@@ -25,7 +37,7 @@ public:
   void execute(const uint8_t* data, unsigned int length, IHardware* deps) override {
     deps->print("running version command");
 
-    std::vector<byte> msg = createSysExMessage("1.0.1");
+    std::vector<byte> msg = createSysExMessage(getVersion());
     deps->sendSysEx(msg.size(), msg.data());
   }
 };
