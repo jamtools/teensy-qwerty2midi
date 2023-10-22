@@ -1,0 +1,58 @@
+name: PlatformIO CI
+
+on:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Install Dependencies
+        run: pio lib install
+
+      - name: Run tests
+        run: pio test -e test
+
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.platformio/.cache
+          key: ${{ runner.os }}-pio
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+      - name: Install PlatformIO Core
+        run: pip install --upgrade platformio
+
+      - name: Install Dependencies
+        run: pio lib install
+
+      - name: Build Project
+        run: pio run -e teensy41
+        env:
+          APPLICATION_VERSION: ${{ github.head_ref }}.${{ github.sha }}
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: firmware.hex
+          path: .pio/build/teensy41/firmware.hex
