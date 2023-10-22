@@ -1,0 +1,1 @@
+nodemon --watch ./src --watch ./test --exec "platformio test -e test" -e cpp,h

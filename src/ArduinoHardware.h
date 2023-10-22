@@ -22,6 +22,14 @@ public:
     void sendMIDI(int note, int velocity) override {
         usbMIDI.sendNoteOn(note, velocity, 1);  // Send NoteOn message on channel 1
     }
+
+    void sendSysEx(int length, const byte* data) {
+        usbMIDI.sendSysEx(length, data);
+    }
+
+    void setHandleSysEx(void (*handle)(const uint8_t *data, uint16_t length, bool complete)) {
+        usbMIDI.setHandleSysEx(handle);
+    }
 };
 
 #endif
