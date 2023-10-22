@@ -23,7 +23,9 @@ public:
 class ReportVersionCommand : public SysExCommand {
 public:
   void execute(const uint8_t* data, unsigned int length, IHardware* deps) override {
-    std::vector<byte> msg = createSysExMessage("1.0.0");
+    deps->print("running version command");
+
+    std::vector<byte> msg = createSysExMessage("1.0.1");
     deps->sendSysEx(msg.size(), msg.data());
   }
 };

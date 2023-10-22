@@ -32,7 +32,7 @@ public:
     }
 
     void loop() {
-        hardware.sendMIDI(60, 0);
+        // hardware.sendMIDI(60, 0);
     }
 
     static SysExCommand* getCommand(byte commandId) {
@@ -40,17 +40,23 @@ public:
             return nullptr;
         }
 
+        instance->hardware.print("looking for command");
+        instance->hardware.print(std::to_string(commandId));
+
         if (instance->commandRegistry.find(commandId) != instance->commandRegistry.end()) {
+            instance->hardware.print("found command");
             return instance->commandRegistry[commandId];
         }
+
+        instance->hardware.print("did not find command");
 
         return nullptr;
     }
 
     static void handleSysEx(const uint8_t* data, uint16_t length, bool complete) {
-        if (length < 1) return;
+        if (length < 5) return;
 
-        byte commandId = data[0];
+        byte commandId = data[4];
 
         SysExCommand* command = getCommand(commandId);
         if (command == nullptr) {

@@ -11,12 +11,10 @@ std::string getContentFromSysExMessage(MockHardware* mockHardware, int callNum) 
 
 void setUp() {
     // This function is called before each test function.
-    // You can perform any setup needed here.
 }
 
 void tearDown() {
     // This function is called after each test function.
-    // You can perform any cleanup needed here.
 }
 
 void test_setupMIDI() {
@@ -40,10 +38,13 @@ void test_sendMIDI() {
     logic.setup();
     logic.loop();
 
-    TEST_ASSERT_EQUAL_MESSAGE(1, mockHardware.sendMIDICalls.size(), "sendMIDI calls");
-    TEST_ASSERT_EQUAL_STRING("sendMIDI", mockHardware.sendMIDICalls[0].first.c_str());
-    TEST_ASSERT_EQUAL_INT(expectedNote, mockHardware.sendMIDICalls[0].second.first);
-    TEST_ASSERT_EQUAL_INT(expectedVelocity, mockHardware.sendMIDICalls[0].second.second);
+    // TEST_ASSERT_EQUAL_MESSAGE(1, mockHardware.sendMIDICalls.size(), "sendMIDI calls");
+    // TEST_ASSERT_EQUAL_STRING("sendMIDI", mockHardware.sendMIDICalls[0].first.c_str());
+    // TEST_ASSERT_EQUAL_INT(expectedNote, mockHardware.sendMIDICalls[0].second.first);
+    // TEST_ASSERT_EQUAL_INT(expectedVelocity, mockHardware.sendMIDICalls[0].second.second);
+
+    // currently disabled the sending of the message on loop
+    TEST_ASSERT_EQUAL_MESSAGE(0, mockHardware.sendMIDICalls.size(), "sendMIDI calls");
 }
 
 void test_versionCommand() {
@@ -53,27 +54,28 @@ void test_versionCommand() {
 
     logic.setup();
 
-    const uint8_t data_arr[] = {0x01};
+    const uint8_t commandId = 0x01;
+    const uint8_t data_arr[] = {0x00, 0x00, 0x00, 0x00, commandId};
     const uint8_t* data = data_arr;
 
-    mockHardware.storedSysExHandler(data, 1, true);
+    mockHardware.storedSysExHandler(data, 5, true);
 
     TEST_ASSERT_EQUAL_MESSAGE(1, mockHardware.sendSysExCalls.size(), "sendSysEx calls");
     std::string capturedVersion = getContentFromSysExMessage(&mockHardware, 0);
-    TEST_ASSERT_EQUAL_STRING("1.0.0", capturedVersion.c_str());
+    TEST_ASSERT_EQUAL_STRING("1.0.1", capturedVersion.c_str());
 }
 
 void test_greetingCommand() {
     MockHardware mockHardware;
     MyLogic logic(mockHardware);
 
-
     logic.setup();
 
-    const uint8_t data_arr[] = {0x02};
+    const uint8_t commandId = 0x02;
+    const uint8_t data_arr[] = {0x00, 0x00, 0x00, 0x00, commandId};
     const uint8_t* data = data_arr;
 
-    mockHardware.storedSysExHandler(data, 1, true);
+    mockHardware.storedSysExHandler(data, 5, true);
 
     TEST_ASSERT_EQUAL_MESSAGE(1, mockHardware.sendSysExCalls.size(), "sendSysEx calls");
     std::string capturedVersion = getContentFromSysExMessage(&mockHardware, 0);

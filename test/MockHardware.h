@@ -36,6 +36,10 @@ public:
     void setHandleSysEx(void (*handle)(const uint8_t *data, uint16_t length, bool complete)) {
         storedSysExHandler = handle;
     }
+
+    void print(std::string s) {
+
+    }
 };
 
 #endif  // MOCK_HARDWARE_H
