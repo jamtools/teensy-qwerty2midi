@@ -1,0 +1,86 @@
+<html>
+
+<body>
+    <script>
+        console.log("Script started.");
+
+        navigator.requestMIDIAccess({sysex: true})
+            .then(onMIDISuccess, onMIDIFailure)
+            .catch((err) => console.error("MIDI Access error:", err));
+
+        function onMIDISuccess(midiAccess) {
+            console.log("MIDI Access Success");
+            const outputs = Array.from(midiAccess.outputs.values());
+            const inputs = Array.from(midiAccess.inputs.values());
+
+            console.log('MIDI outputs:', outputs);
+            console.log('MIDI inputs:', inputs);
+
+            inputs.forEach((input) => input.onmidimessage = getMIDIMessage);
+
+            // const sysexMessage = getSysexMessage();
+            const sysexMessage = [
+                0xF0,   // Start of SysEx
+                0x7E,   // Non-real-time Universal System Exclusive ID
+                0x7F,   // Non-real-time ID (to all devices)
+                0x06,   // Sub-ID #1: General Information
+                0x01,   // Sub-ID #2: Identity Request
+                0xF7    // End of SysEx
+                ];
+
+            if (outputs[2]) {
+                outputs[2].send(sysexMessage);
+                console.log("SysEx message sent.");
+            } else {
+                console.warn("No MIDI output at index 2.");
+            }
+        }
+
+        function getSysexMessage() {
+            const manufacturerId = 0x7D;
+            const commandId = 0x01;
+            const data1 = 0x00;
+            const data2 = 0x00;
+
+            // Calculate the SysEx message length
+            let messageLength = 3;  // Start byte, command identifier, and end byte
+            // Add the length of additional data bytes to messageLength
+
+            // Create an array to hold the SysEx message
+            const sysexMessage = new Uint8Array(255);  // Adjust the size as needed based on the expected maximum length
+
+            // Construct the SysEx message
+            sysexMessage[0] = 0xF0;           // Start of SysEx
+            sysexMessage[1] = manufacturerId; // Manufacturer ID (if applicable)
+            sysexMessage[2] = commandId;      // Command identifier
+            // Add data bytes to sysexMessage as needed
+            // ...
+
+            sysexMessage[messageLength - 1] = 0xF7;  // End of SysEx
+            return sysexMessage;
+        }
+
+        function onMIDIFailure(err) {
+            console.log("MIDI Access Failure:", err);
+        }
+
+        function getMIDIMessage(message) {
+            console.log("Received MIDI Message:", message);
+            const command = message.data[0];
+            const data = message.data.slice(1);
+
+            if (command === 0xF0 || command === 0xF7) {
+                console.log('Received SysEx message:', data);
+                if (data.length > 1) {
+                    const version = String.fromCharCode.apply(null, data).substring(2, data.length - 1);
+                    const msg = 'Teensy is running version ' + version;
+                    document.querySelector('header').innerHTML = msg;
+                }
+            }
+        }
+    </script>
+
+    <header></header>
+</body>
+
+</html>
